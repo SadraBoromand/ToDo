@@ -1,0 +1,87 @@
+<h1 class="display-4 text-center">ToDo</h1>
+
+<form #f="ngForm" (ngSubmit)="submit(f.value)">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Title</label>
+            <input 
+                ngModel 
+                name="title" 
+                #title='ngModel' 
+                required 
+                minlength="3" 
+                placeholder="Title" 
+                type="text"
+                class="form-control">
+            <div *ngIf="title.invalid && title.touched" class="alert alert-danger">
+                <li *ngIf="title.errors?.['required']">Title is required</li>
+                <li *ngIf="title.errors?.['minlength']">Title minlength is {{
+                    title.errors?.['minlength'].requiredLength }}</li>
+            </div>
+            <label class="form-label">Note</label>
+            <textarea 
+                ngModel 
+                name="note" 
+                #note='ngModel' 
+                placeholder="Note" 
+                rows="3" 
+                class="form-control">
+            </textarea>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select 
+                ngModel 
+                name="status" 
+                #status="ngModel" 
+                required 
+                class="form-control">
+                <option 
+                    *ngFor="let status of toDoStatus" 
+                    [value]="status.value"
+                    [ngClass]="{
+                        'text-success': status.color == 'success',
+                        'text-danger': status.color == 'danger',
+                        'text-warning': status.color == 'warning'
+                    }"
+                    >
+                    {{ status.value }}
+                </option>
+            </select>
+            <li *ngIf="status.invalid && status.touched" class="alert alert-danger">
+                Select Status is required
+            </li>
+            <button 
+                [disabled]="f.invalid" 
+                class="btn btn-primary my-3 w-100"
+                >
+                Save
+            </button>
+            <p>
+                {{ f.value | json}}
+            </p>
+        </div>
+    </div>
+</form>
+
+<div *ngIf="todoList.length <= 0" class="alert alert-info my-3 text-center">
+    ToDo List is Empty
+</div>
+<div *ngIf="todoList.length > 0" class="row text-center mt-3">
+    <div *ngFor="let todo of todoList" class="card mx-2 my-2 col-md-4">
+        <div class="card-body">
+            <h5 class="card-title">{{ todo.title }}</h5>
+            <p class="card-text">{{ todo?.note }}</p>
+            <div 
+                [ngClass]="{
+                    'bg-success': todo.color == 'success',
+                    'bg-danger': todo.color == 'danger',
+                    'bg-warning': todo.color == 'warning'
+                }"
+                class="mb-2">
+                {{ todo.status }}
+            </div>
+            <button (click)="delTodo(todo.id)" class="btn btn-sm btn-outline-danger">Delete</button>
+        </div>
+    </div>
+</div>
